@@ -1,0 +1,77 @@
+{% extends 'sidebarbase.html' %}
+<!--{% load staticfiles%}-->
+
+{% load my_filter %}
+
+
+{% block content %}
+<div class="container">
+<form action="#" method="POST">
+<h4>Please enter the movies that you have watched and get recommendations similar to that movie</h4>
+{%csrf_token%}
+ <center>{%csrf_token%}<input type="text" name="title" id="for_recom" placeholder="Search For Movies" list="search-datalist">
+<datalist id="search-datalist"></datalist>
+
+
+<input type="submit" value="get recommendations">
+   </center>
+</form>
+
+<h3>{{a}}</h3>
+ {% for i in myvalue %}
+ <div class="row">
+ {% for i in 15|times %}
+  <div class="col-sm-4">
+   <a href="/movies/detail/{{mid|index:i}}/">
+    <img src="/static/{{ photo|index:i }}" class="img-responsive" alt="Cinque Terre" width="304" height="236">
+  <br>
+  <b>{{ title|index:i }}</b><br><b>{{ imdb|index:i }}</b><br>
+
+  {{ genres|index:i }}
+   </a>
+   <br><a href="/watching_trailer/{{ title|index:i }}/"><button style="align:right;" class="btn-success">Watch trailer</button></a>
+
+  </div>
+ {%endfor%}
+</div>
+{%endfor%}
+</div>
+
+
+
+<script>
+
+$(document).on('keyup', '#for_recom',function(){
+        $.ajax({
+
+            type: "GET",
+            url: "/search/"+$(this).val(),
+            context:this,
+            success: function(data, status){
+$('#search-datalist').empty();
+data=JSON.parse(data);
+total_list=data.length;
+if(total_list<10){
+            for(i in data){
+            $('#search-datalist').append("<option value='" + data[i] + "'>");
+            }
+            }
+            else
+            {
+            for(i=0;i<10;i++)
+            {
+            $('#search-datalist').append("<option value='" + data[i] + "'>");
+            }
+            }
+
+            }
+
+        });
+        });
+
+
+
+</script>
+
+</body>
+{%endblock%}

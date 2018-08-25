@@ -1,0 +1,142 @@
+{%load static%}
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+
+    <title>S4 movies</title>
+
+    <!-- Bootstrap CSS CDN -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+    <!-- Our Custom CSS -->
+    <link rel="stylesheet" href="{% static 'sidenav/css/style.css' %}">
+
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+     integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+     integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"
+     integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <!-- Font Awesome JS -->
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <div class="wrapper">
+        <!-- Sidebar  -->
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <h2>S4 Movies</h2>
+            </div>
+
+            <ul class="list-unstyled components">
+                <li class="active">
+                    <a href="/movies/all/">All Movies</a>
+                    <a href="/movies/recom">Recommendation</a>
+                    <a href="/admin">Admin</a>
+
+                </li>
+
+
+            </ul>
+
+        </nav>
+
+        <!-- Page Content  -->
+        <div id="content">
+
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <div class="container-fluid">
+
+                    <button type="button" id="sidebarCollapse" class="btn btn-info">
+                        <i class="fas fa-align-left"></i>
+                    </button>
+                    <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <i class="fas fa-align-justify"></i>
+                    </button>
+                    <div class="col md-8">  {%if moviename%}
+                              <center><h2>{{moviename}} Trailer</h2></center>
+                        {%elif recompage%}
+                        <center><h2>Movie Recommendation</h2></center>
+                        {%else%}
+                        <center>                            <i class="material-icons">
+search
+                        </i>{%csrf_token%}<input type="text" name="search_text" id="search" placeholder="Search For Movies" list="json-datalist">
+
+        <datalist id="json-datalist"></datalist>
+                        </center>
+                              {%endif%}</div>
+
+
+                </div>
+
+
+            </nav>
+
+        {% block content %} {% endblock %}
+        </div>
+    </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.concat.min.js"></script>
+
+
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#sidebar").mCustomScrollbar({
+                theme: "minimal"
+            });
+
+            $('#sidebarCollapse').on('click', function () {
+                $('#sidebar, #content').toggleClass('active');
+                $('.collapse.in').toggleClass('in');
+                $('a[aria-expanded=true]').attr('aria-expanded', 'false');
+            });
+        });
+    </script>
+    <script>
+
+$(document).on('keyup', '#search',function(){
+        $.ajax({
+
+            type: "GET",
+            url: "/search/"+$(this).val(),
+            context:this,
+            success: function(data, status){
+$('#json-datalist').empty();
+data=JSON.parse(data);
+total_list=data.length;
+if(total_list<10){
+            for(i in data){
+            $('#json-datalist').append("<option value='" + data[i] + "'>");
+            }
+            }
+            else
+            {
+            for(i=0;i<10;i++)
+            {
+            $('#json-datalist').append("<option value='" + data[i] + "'>");
+            }
+            }
+
+            }
+
+        });
+        });
+        $(document).on("keypress", "#search", function(e) {
+     if (e.which == 13) {
+        window.location.href = '/movies/detail/'+$(this).val();
+     }
+});
+
+</script>
+
+</body>
+
+</html>

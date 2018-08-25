@@ -1,0 +1,55 @@
+{% extends 'sidebarbase.html' %}
+
+
+{% load my_filter %}
+
+{% block content %}
+
+
+<div class="container">
+
+
+
+ <div class="row">
+ {% for i in movies %}
+  <div class="  col-sm-4">
+
+<a href="/movies/detail/{{i.id}}">
+        <img src="/static/{{ i.poster_path }}" class="img-responsive" alt="Cinque Terre" width="304" height="236">
+      <br><b>{{i.title}}</b><br></a>
+
+
+             <b>Rating:{{ i.imdb_score}}</b>
+
+
+      <br><a href="/watching_trailer/{{i.title}}/"><button style="align:right;" class="btn-success">Watch trailer</button></a>
+
+  </div>
+
+ {%endfor%}
+</div>
+
+
+
+<div class="well well-sm" align="center">
+    <span class="step-links">
+        {% if movies.has_previous %}
+            <a href="?page=1"><button type="button" class="btn btn-info">First</button></a>
+            <a href="?page={{ movies.previous_page_number }}"><button type="button" class="btn btn-info">Previous</button></a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ movies.number }} of {{ movies.paginator.num_pages }}.
+        </span>
+
+        {% if movies.has_next %}
+            <a href="?page={{ movies.next_page_number }}"><button type="button" class="btn btn-info">Next</button></a>
+            <a href="?page={{ movies.paginator.num_pages }}"><button type="button" class="btn btn-info">Last</button></a>
+        {% endif %}
+    </span>
+</div>
+</div>
+{% endblock %}
+
+
+
